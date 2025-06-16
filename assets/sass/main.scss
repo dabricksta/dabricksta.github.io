@@ -127,15 +127,6 @@
 	body {
 		background: _palette(bg);
 		overflow: hidden;
-
-		// Stops initial animations until page loads.
-			&.is-preload {
-				*, *:before, *:after {
-					@include vendor('animation', 'none !important');
-					@include vendor('transition', 'none !important');
-				}
-			}
-
 	}
 
 	body, input, select, textarea {
@@ -476,3 +467,13 @@
 			}
 
 	}
+
+// Instantly show header, footer, icons, and main content
+#main,
+#header,
+#footer,
+.icon {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
