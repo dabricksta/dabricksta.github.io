@@ -20,14 +20,14 @@
 </head>
 <body>
   <div class="blog-container">
-    <h1>Blog</h1>
     <ul class="post-list" id="post-list"></ul>
     <div id="post-content" style="display:none;"></div>
   </div>
   <script>
-    // List your markdown posts here
     const posts = [
-      { title: "It's all downhill from here.", file: "blog/all_downhill_from_here.md", date: "2025-06-15" }
+      { title: "It's all downhill from here.", file: "blog/all_downhill_from_here.md", date: "2025-06-15", visible: true },
+      { title: "Imagine wandering freely in a hostile web.", file: "blog/imagine_wandering_freely_in_a_hostile_web.md", date: "2025-06-15", visible: false },
+      { title: "Rhymes", file: "blog/rhymes.md", date: "2025-06-15", visible: false },
       // Add more posts as needed
     ];
 
@@ -37,22 +37,14 @@
     function showList() {
       postContent.style.display = 'none';
       postList.style.display = '';
-      postList.innerHTML = '';
-      posts.forEach((post, idx) => {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        a.textContent = `${post.title} (${post.date})`;
-        a.href = '#';
-        a.onclick = (e) => {
-          e.preventDefault();
-          loadPost(idx);
-        };
-        li.appendChild(a);
-        postList.appendChild(li);
-      });
+      // Render only visible posts
+      postList.innerHTML = posts
+        .filter(post => post.visible)
+        .map((post, idx) => `<li><a href="#" onclick="showPost(${idx})">${post.title}</a> <span style="font-size:0.8em;color:#888;">${post.date}</span></li>`)
+        .join('');
     }
 
-    function loadPost(idx) {
+    function showPost(idx) {
       fetch(posts[idx].file)
         .then(res => res.text())
         .then(md => {
@@ -63,7 +55,25 @@
         });
     }
 
-    showList();
+    // Support direct navigation: blog.html?post=rhymes.md
+    function getQueryParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+
+    function showPostByFile(filename) {
+      const idx = posts.findIndex(post => post.file.endsWith(filename));
+      if (idx !== -1) showPost(idx);
+      else showList();
+    }
+
+    // Initial load
+    const postParam = getQueryParam('post');
+    if (postParam) {
+      showPostByFile(postParam);
+    } else {
+      showList();
+    }
   </script>
 </body>
 </html>
