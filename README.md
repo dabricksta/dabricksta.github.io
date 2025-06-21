@@ -1,2 +1,1 @@
-# dabricksta.github.io
-Personal site
+Personal website
